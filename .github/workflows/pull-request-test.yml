@@ -1,0 +1,27 @@
+name: Build Test
+on:
+  workflow_dispatch: {}
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: '${{ github.workflow }}-${{ github.ref }}'
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      # https://classic.yarnpkg.com/en/docs/cli/install
+      - run: yarn install --frozen-lockfile
+
+      # Only build to verify that it is available, not deploy
+      - run: yarn build

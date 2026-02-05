@@ -57,7 +57,7 @@ Jimmer会尽量利用数据库本身的UPSERT的能力，将两个步骤合并�
 <tr>
 <td><b>UPDATE</b></td>
 <td>所有关联</td>
-<td>是</td>
+<td>否</td>
 <td>
 
 -   如果关联对象的id属性被指定了，按照id更新关联对象
@@ -149,7 +149,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val book = Book { ...略... }
-    sqlCient.save(book, AssociatedSaveMode.MERGE);
+    sqlClient.save(book, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -170,7 +170,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val books = listOf<Book>(...略...)
-    sqlCient.saveEntities(books, AssociatedSaveMode.MERGE);
+    sqlClient.saveEntities(books, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -191,7 +191,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val inputs = listOf<BookInput>(...略...)
-    sqlCient.saveInputs(inputs, AssociatedSaveMode.MERGE);
+    sqlClient.saveInputs(inputs, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -226,7 +226,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val book = Book { ...略... }
-    sqlCient.insert(book, AssociatedSaveMode.MERGE);
+    sqlClient.insert(book, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -247,7 +247,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val books = listOf<Book>(...略...)
-    sqlCient.insertEntities(books, AssociatedSaveMode.MERGE);
+    sqlClient.insertEntities(books, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -268,7 +268,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val inputs = listOf<BookInput>(...略...)
-    sqlCient.insertInputs(inputs, AssociatedSaveMode.MERGE);
+    sqlClient.insertInputs(inputs, AssociatedSaveMode.MERGE);
     ```
 
     </TabItem>
@@ -300,7 +300,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val book = Book { ...略... }
-    sqlCient.save(book) {
+    sqlClient.save(book) {
         // highlight-next-line
         setAssociatedMode(
             Book::authors,
@@ -343,7 +343,7 @@ Jimmer的API设计让用户只能选者其中一种方法，不会导致导致�
 
     ```kotlin
     val book = Book { ...略... }
-    sqlCient.save(book) {
+    sqlClient.save(book) {
         // highlight-next-line
         setAssociatedModeAll(
             AssociatedSaveMode.MERGE
@@ -1135,7 +1135,7 @@ sqlClient.saveEntities(
 
 `MERGE`模式对关联对象`INSERT`或`UPDATE`操作，所以，保存执行后，关联对象的数量要么不变，要么变多，但不可能变少。
 
-`REPLACE`模式不再有次特性，因为`REPLACE`在`MERGE`的基础上，对不再需要的关联对象进行脱钩操作。
+`REPLACE`模式不再有此特性，因为`REPLACE`在`MERGE`的基础上，对不再需要的关联对象进行脱钩操作。
 
 脱钩操作会去除当前对象不再需要的关联，例如
 

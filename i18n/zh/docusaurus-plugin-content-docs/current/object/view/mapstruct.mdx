@@ -7,6 +7,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { ShortAssociation } from '@site/src/components/ShortAssociation';
 import { ViewMore } from '@site/src/components/ViewMore';
+import { VersionBadgeAdmonition } from '@site/src/components/VersionBadgeAdmonition';
 
 ## 简介
 
@@ -75,6 +76,8 @@ Jimmer的实体对象是动态的 *(和Hibernate3引入的标量属性惰性化�
 你既可以使用Jimmer标准的构建方式，也可以采用社区提供的插件
 
 -   用法一：使用Jimmer标准的构建方式
+
+    <VersionBadgeAdmonition />
 
     <Tabs groupId="buildTool">
     <TabItem value="java_maven" label="Java(Maven)">
@@ -631,7 +634,7 @@ public interface Input<E> {
 }
 ```
 
-动态对象永远不会实现此结构，该接口应该由用户自定义的静态POJO类来实现。其功能非常简单，就是把当前静态POJO转化为动态对象。
+动态对象永远不会实现此接口，该接口应该由用户自定义的静态POJO类来实现。其功能非常简单，就是把当前静态POJO转化为动态对象。
 
 该接口可以提供语法层面的便利，无论是底层的[保存指令](../../mutation/save-command)还是上层的spring-data基接口`JRepository/KRepository`，其`sava`方法都直接接受`Input`参数，而无需用户调用Mapper完成转化。
 
