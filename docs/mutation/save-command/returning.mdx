@@ -51,8 +51,9 @@ exposes `modifiedView`.
 
 ## Acceptance {#acceptance}
 
-A result item's `isAccepted` reports whether its own insert or update branch
-was accepted. Check it before treating the returned entity as a successful write:
+A result item's `isAccepted` reports whether the save command accepted that
+object under its save mode and conditions. Acceptance does not require a
+physical SQL update. Check the flag to distinguish acceptance from rejection:
 
 <Tabs groupId="language">
 <TabItem value="java" label="Java">
@@ -77,13 +78,15 @@ val accepted = result.isAccepted
 | --- | --- |
 | Inserted row | `true` |
 | Accepted update, including a self-assignment | `true` |
+| Accepted object with no required SQL update | `true` |
 | Existing row skipped by `INSERT_IF_ABSENT` | `false` |
 | Update rejected by `setUpdateWhere` | `false` |
 | Update rejected by an incompatible single-table subtype discriminator | `false` |
 
-This is distinct from object modification and affected-row count. A driver may
-report zero affected rows for an accepted operation; use the acceptance flag
-instead of inferring a business decision from that number.
+This is distinct from object modification, affected-row count, and row locking.
+An accepted object can require no SQL update, and a driver may also report zero
+affected rows for an executed update. Use the acceptance flag instead of
+inferring a business decision from that number.
 
 Batch result items and Java/Kotlin view results preserve the same flag.
 Acceptance is local to the saved object, not a summary of every association in
@@ -92,7 +95,7 @@ inserted again, but its resolved id can still be used to create the parent's
 association. An owner rejected by an update condition does not proceed with its
 post-associations.
 
-For a query-based mutation, [insert/upsert returning](../insert-from-select)
+For a query-based mutation, [insert/upsert returning](../insert-from-select.mdx)
 contains only rows that took an accepted mutation branch.
 
 ## How the Result Is Materialized
@@ -115,6 +118,12 @@ save returning, using an unsupported dialect, or using a mutation shape that
 cannot safely return rows changes how the result is obtained, not the result
 contract.
 
+The result contract does not promise identical database side effects. Returning
+existing fields can require a technical self-assignment even when no property
+values need updating. That SQL can affect row counts, triggers, and locks;
+without that retrieval requirement, the update may be omitted. See the
+[upsert concurrency contract](./save-mode#control-an-upsert-update).
+
 The built-in current-row returning implementations are provided by `H2Dialect`
 and `PostgresDialect`. Other dialects continue through residual fetching unless
 they provide the corresponding capability.
@@ -126,7 +135,7 @@ Save returning can materialize current-entity columns, including:
 - IDs and ordinary scalar columns
 - Version and discriminator columns
 - Foreign-key ID columns
-- Values produced by [assignment expressions](./assignment)
+- Values produced by [assignment expressions](./assignment.mdx)
 - Unloaded properties marked with `@DatabaseDefault`
 
 For `JOINED` inheritance, returning is decided independently for each physical
@@ -166,5 +175,5 @@ Values that are inherently unknown, such as a custom assignment result or an
 unloaded `@DatabaseDefault` property, are already read automatically; enabling
 this option is not required for them.
 
-See [Save Result Configuration](../../configuration/save-result) for global,
+See [Save Result Configuration](../../configuration/save-result.mdx) for global,
 Spring Boot, and per-command settings.
