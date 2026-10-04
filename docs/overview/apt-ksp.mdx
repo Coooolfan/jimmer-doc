@@ -55,18 +55,16 @@ So, in which subprojects should we use the configurations mentioned earlier?
 
 ## Notes
 
-Since Jimmer is a compile-time framework, and considering that not all users are familiar with `apt` and `ksp`, it's necessary to mention an important detail. 
+APT and KSP run during compilation. When Java or Kotlin sources change, building or running the project
+through an IDE configured to run the processor normally updates the generated code and resources.
 
-`Apt/Ksp` are standard technologies in the industry, and Java IDEs provide support for them.
+Changes to DTO files also need to trigger code generation. For Kotlin/JVM projects built with Gradle,
+use the DTO task inputs shown in the Kotlin configuration above and run the Gradle build after editing `.dto` files.
+Without these inputs, Gradle may consider the KSP task `UP-TO-DATE` and keep the previous generated DTO.
 
--   In most cases, your modifications will include changes to Java or Kotlin code, such as changes in entity types or Web Controller*(Jimmer has its own implementations for OpenAPI and TypeScript generation)*. In this case, you only need to click the IDE's `Run` or `Debug` button once, without requiring a full compilation, to trigger all pre-compilation behaviors, the automatically generated source code and resource files will update automatically.
+For other build setups, use the companion DTO plugin or perform a clean rebuild when only DTO files have changed.
+A clean rebuild can also help diagnose stale generated code; it is not needed for every DTO edit when Gradle inputs are configured.
 
--   In rare cases, if you only modify DTO files, meaning there are no Java or Kotlin source code changes within the same project except for the DTO files, you have three options:
-
-    -   Use the companion DTO plugin
-    -   Perform a full compilation using maven or gradle commands, or the IDE's `Rebuild` button, which can achieve this purpose
-    -   Delete the affected project's compilation output directory, then click the IDE's `Run` or `Debug` button`
-    
 ## Two Styles of Java Code
 
 Unlike the Kotlin API, the Java API cannot avoid to directly use automatically generate types in user code. Let's compare the following:

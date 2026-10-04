@@ -55,19 +55,15 @@ Intellij对通过maven引入的annotation processor的整合存在一些轻率�
 
 ## 注意事项
 
-注意事项
+APT 和 KSP 在编译时执行。修改 Java 或 Kotlin 源码后，通过已配置注解处理器的 IDE
+构建或运行项目，通常会自动更新生成的代码和资源。
 
-由于Jimmer是一个编译时框架，考虑到并非所有用户都熟悉Apt和Ksp，有必要提及一个重要细节。
+修改 DTO 文件也需要触发代码生成。对于通过 Gradle 构建的 Kotlin/JVM 项目，
+请使用上方 Kotlin 配置中的 DTO 任务输入设置，并在修改 `.dto` 文件后执行 Gradle 构建。
+如果没有注册这些输入，Gradle 可能将 KSP 任务视为 `UP-TO-DATE`，保留旧的 DTO 代码。
 
-Apt/Ksp是行业内的标准技术，Java IDE会给予支持。
-
--   大部分情况下，你的修改都会包含Java或Kotlin代码的变化，
-    例如，实体类型变化，或Web Controller变化 *(Jimmer有自己的OpenAPI和TypeScript生成的实现)*。这时只需点击IDE的Run或Debug按钮运行一次，无需全量编译，就可以触发所有的预编译行为，自动生成的源代码和资源文件都会自动变化
-
--   少部分情况下，如果仅仅修改DTO文件，即，除了DTO文件外，同一个工程内没有任何Java或Kotlin源码变动，这时，你有三个选择
-    -   采用配套的DTO插件
-    -   全量编译，maven或gradle命令，或IDE的Rebuild按钮，都可以达到这个目的
-    -   删除受影响工程的编译输出目录后，再点击IDE的Run或Debug按钮
+对于其他构建方式，仅修改 DTO 文件时，可以使用配套的 DTO 插件或执行 clean 后重新构建。
+clean 构建也有助于排查生成代码未更新的问题；配置 Gradle 输入后，无需每次修改 DTO 都执行 clean。
 
 ## Java代码的两种风格
 
